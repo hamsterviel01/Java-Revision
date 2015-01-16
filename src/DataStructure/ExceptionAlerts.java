@@ -1,0 +1,11 @@
+package DataStructure;
+
+public class ExceptionAlerts {
+	public final String overFlowExceptionAlert = "Overflow Exception: data structure is full";
+	public final String elementNotFoundExceptionAlert = "ElementNotFound Exception: key does not exist in data structure";
+	public final String underFlowExceptionAlert = "Underflow Exception: data structure is already empty";
+	
+	public ExceptionAlerts(){
+		
+	}
+}
