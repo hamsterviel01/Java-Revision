@@ -5,6 +5,7 @@ public class SinglyLinkedList {
 	private int linkedListSize = 5;
 	private int[] linkedListValue;
 	private int[] linkedListPointerNext;
+	//Improve this programe by not using stack to save memory
 	private Stack emptySpaceManager;
 	private ExceptionAlerts exceptionAlerts = new ExceptionAlerts();
 	
@@ -125,6 +126,7 @@ public class SinglyLinkedList {
 		return false;
 	}
 	
+	//How to reduce run time of this one to O(1)
 	protected int returnPreviousElement(int pointer){
 		int i = 0;
 		while (linkedListPointerNext[i] != 0){

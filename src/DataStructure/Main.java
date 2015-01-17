@@ -11,17 +11,13 @@ public class Main {
 		Queue queue1 = new Queue(3);
 		SinglyLinkedList linkedList1 = new SinglyLinkedList(6);
 		DoubleLinkedList linkedList2 = new DoubleLinkedList(5);
+		BinaryTree tree1 = new BinaryTree(11);
+		int[] arrayValue = {-1, 12, 15, 4, 10, 2, 18, 7, 14, 21, 5};
+		int[] arrayLeft = {-1, 7, 8, 10, 5, -1, 1, -1, 6, -1, -1};
+		int[] arrayRight = {-1, 3, -1, -1, 9, -1, 4, -1, 2, -1, -1};
 		
-		linkedList2.insertLinkedList(23, 0);
-		linkedList2.insertLinkedList(22, 0);
-		linkedList2.insertLinkedList(21, 1);
-		linkedList2.insertLinkedList(25, 2);
-		linkedList2.insertLinkedList(27, 0);
-		linkedList2.insertLinkedList(21, 1);
-		
-		linkedList2.deleteLinkedList(0);
-		linkedList2.deleteLinkedList(3);
-		linkedList2.deleteLinkedList(2);
+		tree1.importTreeData(arrayValue, arrayLeft, arrayRight, 6);
+		tree1.printAllNodeValue(6);
 	}
 
 }
