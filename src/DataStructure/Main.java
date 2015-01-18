@@ -17,7 +17,7 @@ public class Main {
 		int[] arrayRight = {-1, 3, -1, -1, 9, -1, 4, -1, 2, -1, -1};
 		
 		tree1.importTreeData(arrayValue, arrayLeft, arrayRight, 6);
-		tree1.printAllNodeValue(6);
+		tree1.printAllNodeValueRecursive10dot4dot2(6);
 	}
 
 }
