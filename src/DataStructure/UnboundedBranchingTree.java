@@ -35,6 +35,16 @@ public class UnboundedBranchingTree {
 		this.rootIndex = rootIndex;
 	}
 	
+	//For quickly input tree nodes
+	//How to check if array is equal in length?
+	protected UnboundedBranchingTree(int[] parentIndex, int[] leftmostChildIndex, int[] rightSiblingIndex, int[] value, int rootIndex){
+		this.parentIndex = parentIndex;
+		this.leftmostChildIndex = leftmostChildIndex;
+		this.rightSiblingIndex = rightSiblingIndex;
+		this.value = value;
+		this.rootIndex = rootIndex;
+	}
+	
 	protected boolean isEmpty(){
 		//if root has no leftmost child, tree is empty
 		if (leftmostChildIndex[rootIndex] != -1){
@@ -51,7 +61,14 @@ public class UnboundedBranchingTree {
 		return false;
 	}
 	
-	protected int[] searchRecursive(int pointer, int currentNodeIndex){
+	protected void search(int index){
+		searchRecursive(index, rootIndex);
+	}
+	
+	//May need to improve on this method, since search and isExist function will be used a lot
+	//Running time = O(n) (worst case)
+	//May use hashtable??
+	private int[] searchRecursive(int pointer, int currentNodeIndex){
 		//We need to assume array can contain garbage data that not belong to the tree, need algorithm to check if it is really belong to current tree
 		int[] resultNode = new int[4];
 		
@@ -78,11 +95,14 @@ public class UnboundedBranchingTree {
 		return resultNode;
 	}
 	
+	//This is assumed that this node is existed
 	protected int[] getAllChild(int pointer){
 		
 		//how to get size of allChild without run through the entire node? 
 		//--> save some temporary space, especially when tree is very large
 		int[] allChild = new int[maxNumberOfNodes];
+		
+		//check if node has any child
 		if (leftmostChildIndex[pointer] != -1){
 			System.out.println("This node has no child");
 		} else {
