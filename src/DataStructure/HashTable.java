@@ -8,6 +8,15 @@ package DataStructure;
  *
  */
 public class HashTable {
+	private int[] keyArray;
+	private int[] valueArray;
+	private int[] hashTable;
+	
+	public HashTable(int[] keyArray, int[] valueArray){
+		this.keyArray = keyArray;
+		this.valueArray = valueArray;
+	}
+	
 	protected void chainingCollisionManage(){
 		
 	}
