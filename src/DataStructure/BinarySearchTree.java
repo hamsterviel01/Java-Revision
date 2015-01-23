@@ -51,31 +51,92 @@ public class BinarySearchTree {
 		
 	}
 	
-	protected void printInOrderTreeWalk(int startNode){
+	protected void printInOrderTreeWalk(){
+		printRecursiveInOrderTreeWalk(rootIndex);
+	}
+	
+	protected void printRecursiveInOrderTreeWalk(int startNode){
 		//print tree from start node x: x.left -> print x --> print x.right
-		System.out.println(startNode);
 		if (leftChildArray[startNode] != -1){
-			printInOrderTreeWalk(leftChildArray[startNode]);
+			printRecursiveInOrderTreeWalk(leftChildArray[startNode]);
 		}
+		System.out.println(keyArray[startNode]);
 		if (rightChildArray[startNode] != -1){
-			printInOrderTreeWalk(rightChildArray[startNode]);
+			printRecursiveInOrderTreeWalk(rightChildArray[startNode]);
 		}
 	}
 	
 	protected void printPreOrderTreeWalk(){
-		
+		printRecursivePreOrderTreeWalk(rootIndex);
 	}
 	
+	protected void printRecursivePreOrderTreeWalk(int currentNode){
+		System.out.println(keyArray[currentNode]);
+		if (leftChildArray[currentNode] != -1){
+			printRecursivePreOrderTreeWalk(leftChildArray[currentNode]);
+		}
+		if (rightChildArray[currentNode] != -1){
+			printRecursivePreOrderTreeWalk(rightChildArray[currentNode]);
+		}
+	}
 	protected void printPostOrderTreeWalk(){
-		
+		printRecursivePostOrderTreeWalk(rootIndex);
 	}
 	
-	protected int[] sucessor(int key){
-		
+	protected void printRecursivePostOrderTreeWalk(int currentNode){
+		System.out.println(keyArray[currentNode]);
+		if (leftChildArray[currentNode] != -1){
+			printRecursivePostOrderTreeWalk(leftChildArray[currentNode]);
+		}
+		if (rightChildArray[currentNode] != -1){
+			printRecursivePostOrderTreeWalk(rightChildArray[currentNode]);
+		}
 	}
 	
-	protected int[] precedessor(int key){
-		
+	//T(n) = O(h) + O(h) = O(h)
+	protected int successor(int index){
+		//check if this index belong to tree or not
+		if (isExist(index)){
+			//if node has no right child --> the first ancestor who previous ancestor a left child will be its successor
+			if (rightChildArray[index] == -1){
+				do {
+					int temp = index;
+					index = parentArray[index];
+					if (leftChildArray[index] == temp){
+						//return successor
+						return index;
+					}
+				} while(parentArray[index] != -1);
+				
+				//if it reach root and root's left child is not its (our node) ancestor, return no successor
+				return -1;
+			} else {
+				//if current node has right child --> its leftmost child is successor
+				index = rightChildArray[index];
+				if (leftChildArray[index] != -1){
+					do {
+						index = leftChildArray[index];
+					} while (leftChildArray[index] != -1);
+					//return successor
+					return index;
+				} else {
+					//return successor
+					return index;
+				}
+			}
+		} else {
+			System.out.println(exceptionAlerts.elementNotFoundExceptionAlert);
+			return -1;
+		}
+	}
+	
+	protected int[] precedessor(int index){
+		if (isExist(index)){
+			
+		} else {
+			System.out.println(exceptionAlerts.elementNotFoundExceptionAlert);
+			return -1;
+		}
 	}
 	
 	protected int[] minNode(){
@@ -144,27 +205,32 @@ public class BinarySearchTree {
 	
 	//T(n) = O(h)
 	protected boolean isExist(int key){
-		//check if key is root	
-		if (key == rootIndex){
-			return true;
-		} else {
-			do {
-				//check if node is a valid child of its parent (either right child or left child)
-				if (rightChildArray[parentArray[key]] == key || leftChildArray[parentArray[key]] == key){
-					// check node's parent --> see if it valid
-					key = parentArray[key]; 
+		//check if key is in range	
+		if (key >= 0 && key < treeMaxNumberOfNode){
+			//check if key is root
+			if (key == rootIndex){
+				return true;
+			} else {
+				do {
+					//check if node is a valid child of its parent (either right child or left child)
+					if (rightChildArray[parentArray[key]] == key || leftChildArray[parentArray[key]] == key){
+						// check node's parent --> see if it valid
+						key = parentArray[key]; 
+					} else {
+						return false;
+					}
+				}
+				while (parentArray[key] != -1);
+				
+				//see if the oldest ancestor is root.
+				if (key == rootIndex){
+					return true;
 				} else {
 					return false;
 				}
 			}
-			while (parentArray[key] != -1);
-			
-			//see if the oldest ancestor is root.
-			if (key == rootIndex){
-				return true;
-			} else {
-				return false;
-			}
+		} else {
+			return false;
 		}
 	}
 }
