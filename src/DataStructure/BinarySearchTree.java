@@ -48,11 +48,12 @@ public class BinarySearchTree {
 		emptySpaceManager = new Stack(treeMaxNumberOfNode);
 		
 		//initialize emptySpaceManager
-		
+		//it should be empty since no space is available
 	}
 	
 	protected void printInOrderTreeWalk(){
 		printRecursiveInOrderTreeWalk(rootIndex);
+		System.out.print("\n");
 	}
 	
 	protected void printRecursiveInOrderTreeWalk(int startNode){
@@ -60,7 +61,7 @@ public class BinarySearchTree {
 		if (leftChildArray[startNode] != -1){
 			printRecursiveInOrderTreeWalk(leftChildArray[startNode]);
 		}
-		System.out.println(keyArray[startNode]);
+		System.out.print(keyArray[startNode] + "-");
 		if (rightChildArray[startNode] != -1){
 			printRecursiveInOrderTreeWalk(rightChildArray[startNode]);
 		}
@@ -68,10 +69,11 @@ public class BinarySearchTree {
 	
 	protected void printPreOrderTreeWalk(){
 		printRecursivePreOrderTreeWalk(rootIndex);
+		System.out.print("\n");
 	}
 	
 	protected void printRecursivePreOrderTreeWalk(int currentNode){
-		System.out.println(keyArray[currentNode]);
+		System.out.print(keyArray[currentNode] + "-");
 		if (leftChildArray[currentNode] != -1){
 			printRecursivePreOrderTreeWalk(leftChildArray[currentNode]);
 		}
@@ -100,29 +102,22 @@ public class BinarySearchTree {
 			//if node has no right child --> the first ancestor who previous ancestor a left child will be its successor
 			if (rightChildArray[index] == -1){
 				do {
-					int temp = index;
-					index = parentArray[index];
-					if (leftChildArray[index] == temp){
+					if (leftChildArray[parentArray[index]] == index){
 						//return successor
 						return index;
 					}
-				} while(parentArray[index] != -1);
+					index = parentArray[index];
+				} while (index != rootIndex);
 				
 				//if it reach root and root's left child is not its (our node) ancestor, return no successor
 				return -1;
 			} else {
 				//if current node has right child --> its leftmost child is successor
 				index = rightChildArray[index];
-				if (leftChildArray[index] != -1){
-					do {
-						index = leftChildArray[index];
-					} while (leftChildArray[index] != -1);
-					//return successor
-					return index;
-				} else {
-					//return successor
-					return index;
+				while (leftChildArray[index] != -1){
+					index = leftChildArray[index];
 				}
+				return index;
 			}
 		} else {
 			System.out.println(exceptionAlerts.elementNotFoundExceptionAlert);
@@ -130,9 +125,26 @@ public class BinarySearchTree {
 		}
 	}
 	
-	protected int[] precedessor(int index){
+	protected int predecessor(int index){
+		//Check if index belong to tree or not
 		if (isExist(index)){
-			
+			//If node has no left child, first ancestor with right child is also an ancestor of index will be its predecessor
+			if (leftChildArray[index] == -1){
+				do {
+					if (rightChildArray[parentArray[index]] == index){
+						return parentArray[index];
+					}
+					index = parentArray[index];
+				} while (index != rootIndex);
+				return -1;
+			} else {
+				//if node has left child --> rightmost child of left sub-tree is it predecessor
+				index = leftChildArray[index];
+				while (rightChildArray[index] != -1){
+					index = rightChildArray[index];
+				}
+				return index;
+			}
 		} else {
 			System.out.println(exceptionAlerts.elementNotFoundExceptionAlert);
 			return -1;
@@ -181,12 +193,179 @@ public class BinarySearchTree {
 		}
 	}
 	
-	protected void insert(int key){
-		
+	protected void insert(int insertValue){
+		//looking for place to insert value
+		if (!isFull()){
+			int currentNode = rootIndex;
+			do {
+				if (insertValue > keyArray[currentNode]){
+					currentNode = rightChildArray[currentNode];
+				} else if (insertValue < keyArray[currentNode]){
+					currentNode = leftChildArray[currentNode];
+				} else {
+					//to avoid ArrayOutOfBoundException -1
+				}
+			} while (!(insertValue >= keyArray[currentNode] && insertValue <= keyArray[parentArray[currentNode]])
+					|| (insertValue <= keyArray[currentNode] && insertValue >= keyArray[parentArray[currentNode]]));
+			
+			if (insertValue >= keyArray[currentNode] && insertValue <= keyArray[parentArray[currentNode]]){
+				if (insertValue >= successor(currentNode)){
+					
+				}
+			} else {
+				
+			}
+		} else {
+			System.out.println(exceptionAlerts.overFlowExceptionAlert);
+		}
 	}
 	
-	protected void delete(int key){
+	protected void delete(int index){
+		//Imagine that it is a sorted order list --> to delete is to modified relationship between its predecessor and successor 
+		//--> choose among predecessor and successor which one has no child --> save the hassle
+		//if both has no child or both has child --> choose the successor
+		if (isExist(index)){
+			//case 1: if it has no child --> just set its parent and its value to -1 accordingly
+			if (!hasChild(index)){
+				if (rightChildArray[parentArray[index]] == index){
+					rightChildArray[parentArray[index]] = -1;
+				} else if (leftChildArray[parentArray[index]] == index) {
+					leftChildArray[parentArray[index]] = -1;
+				} else {
+					System.out.println(exceptionAlerts.unexpectedErrorInDataStructure);
+				}
+				
+				//put all key and parent index to -1
+				setValueOfDeletedNode(index);
+			} else {
+				//case 2: if it has child --> started to care about predecessor and successor
+				//        let the child fill up its position.
+				//first: if it has 1 child --> easy
+				if (hasChild(index) && (leftChildArray[index] == -1 || rightChildArray[index] == -1)) {
+					//adjust index's parent
+					if (rightChildArray[parentArray[index]] == index){
+						rightChildArray[parentArray[index]] = leftChildArray[index];
+					} else if (leftChildArray[parentArray[index]] == index) {
+						leftChildArray[parentArray[index]] = leftChildArray[index];
+					} else {
+						System.out.println(exceptionAlerts.unexpectedErrorInDataStructure);
+					}
+					
+					//adjust index's left child or right child
+					if (leftChildArray[index] != -1){
+						parentArray[leftChildArray[index]] = parentArray[index];
+					} else {
+						parentArray[rightChildArray[index]] = parentArray[index];
+					}
+					
+					//delete index
+					setValueOfDeletedNode(index);
+					
+//				} else if (leftChildArray[rightChildArray[index]] == -1){
+//
+//					//second: if it has 2 children, pick the right child that has no left child or the left child that has no right child --> to fill up
+//					int fillUpNode = rightChildArray[index];
+//					
+//					//adjust parent
+//					if (leftChildArray[parentArray[index]] == index){
+//						leftChildArray[parentArray[index]] = fillUpNode;
+//					} else {
+//						rightChildArray[parentArray[index]] = fillUpNode;
+//					}
+//					
+//					//adjust left child
+//					parentArray[leftChildArray[index]] = fillUpNode;
+//					
+//					//adjust fillUpNode
+//					parentArray[fillUpNode] = parentArray[index];
+//					leftChildArray[fillUpNode] = leftChildArray[index];
+//					
+//					//delete index node
+//					setValueOfDeletedNode(index);
+//				} else if (rightChildArray[leftChildArray[index]] == -1) {
+//					int fillUpNode = rightChildArray[index];
+//					
+//					//adjust parent
+//					if (leftChildArray[parentArray[index]] == index){
+//						leftChildArray[parentArray[index]] = fillUpNode;
+//					} else {
+//						rightChildArray[parentArray[index]] = fillUpNode;
+//					}
+//					
+//					//adjust right child
+//					parentArray[rightChildArray[index]] = fillUpNode;
+//					
+//					//adjust fillUpNode
+//					parentArray[fillUpNode] = parentArray[index];
+//					rightChildArray[fillUpNode] = rightChildArray[index];
+//					
+//					//delete index node
+//					setValueOfDeletedNode(index);
+  				  } else {
+					// this mean node will have both successor and predecessor as its grand... child
+					// take the successor --> successor will not has right child.
+					int successorIndex = successor(index);
+					if (hasChild(successorIndex)) {
+						//adjust child of successor if successor has right child
+						parentArray[rightChildArray[successorIndex]] = parentArray[successorIndex];
+						leftChildArray[parentArray[successorIndex]] = rightChildArray[successorIndex];
+						
+						//adjust parent of successor:
+						rightChildArray[parentArray[successorIndex]] = -1;
+						
+						//adjust successor
+						parentArray[successorIndex] = parentArray[index];
+						rightChildArray[successorIndex] = rightChildArray[index];
+						leftChildArray[successorIndex] = leftChildArray[index];
+						
+						
+						//adjust child of index
+						parentArray[rightChildArray[index]] = successorIndex;
+						parentArray[leftChildArray[index]] = successorIndex;
+						
+						//adjust parent of index
+						rightChildArray[parentArray[index]] = successorIndex;
+						
+						//delete index
+						setValueOfDeletedNode(index);
+					} else {
+						System.out.println(parentArray[successor(index)]);
+						//adjust parent of successor:
+						leftChildArray[parentArray[successorIndex]] = -1;
+						
+						// now successor(index) = 9
+						System.out.println(parentArray[successorIndex] + " " + rightChildArray[successorIndex] + " " + leftChildArray[successorIndex]);
+
+						//adjust successor
+						parentArray[successorIndex] = parentArray[index];
+						rightChildArray[successorIndex] = rightChildArray[index];
+						leftChildArray[successorIndex] = leftChildArray[index];
+						
+						System.out.println(parentArray[successorIndex] + " " + rightChildArray[successorIndex] + " " + leftChildArray[successorIndex]);
+
+						
+						//adjust child of index
+						parentArray[rightChildArray[index]] = successorIndex;
+						parentArray[leftChildArray[index]] = successorIndex;
+						
+						//adjust parent of index
+						rightChildArray[parentArray[index]] = successorIndex;
+						
+						//delete index
+						setValueOfDeletedNode(index);
+					}
+				}
+			}
+		}
+	}
+	
+	private void setValueOfDeletedNode(int index){
+		parentArray[index] = -1;
+		leftChildArray[index] = -1;
+		rightChildArray[index] = -1;
 		
+		//adjust emptySpaceManager
+		emptySpaceManager.push(index);
 	}
 	
 	//O(1)
@@ -232,5 +411,12 @@ public class BinarySearchTree {
 		} else {
 			return false;
 		}
+	}
+	
+	protected boolean hasChild(int index){
+		if (rightChildArray[index] != -1 || leftChildArray[index] != -1){
+			return true;
+		}
+		return false;
 	}
 }

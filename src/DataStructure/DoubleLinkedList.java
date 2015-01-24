@@ -113,7 +113,8 @@ public class DoubleLinkedList {
 		if (pointer >= 0 && pointer <= linkedListSize){
 			//find this pointer in emptySpaceManager, if it is there then it is not in linked list
 			int[] emptySpaceArray = emptySpaceManager.returnStackAsArray();
-			for (int i = 0; i < emptySpaceManager.getHead(); i++){
+			int stackLength = emptySpaceManager.getHead();
+			for (int i = 0; i < stackLength; i++){
 				if (emptySpaceArray[i] == pointer){
 					return false;
 				}
