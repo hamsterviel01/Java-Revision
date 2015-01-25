@@ -26,11 +26,13 @@ public class Main {
 		int[] leftChildArray = 		{-1,  0,  1, -1,  2, -1,  5, -1,  6, 11, -1, -1};
 		int[] rightChildArray = 	{-1, -1,  3, -1,  8, -1,  7, -1,  9, 10, -1, -1};
 		int[] satelliteData = 		{-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
-		BinarySearchTree binarySearchTree1 = new BinarySearchTree(rootIndex, treeMaxNumberOfNode, keyArray, parentArray, leftChildArray, rightChildArray);
+		BinarySearchTree binarySearchTree1 = new BinarySearchTree(rootIndex, treeMaxNumberOfNode, keyArray, parentArray, leftChildArray, rightChildArray, satelliteData);
 		
 		//binarySearchTree1.printInOrderTreeWalk();
-		System.out.println(binarySearchTree1.successor(8));
 		binarySearchTree1.delete(5);
+		binarySearchTree1.printInOrderTreeWalk();
+		binarySearchTree1.printPreOrderTreeWalk();
+		binarySearchTree1.insert(3);
 		binarySearchTree1.printInOrderTreeWalk();
 		binarySearchTree1.printPreOrderTreeWalk();
 	}

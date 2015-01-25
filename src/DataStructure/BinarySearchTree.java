@@ -19,7 +19,7 @@ public class BinarySearchTree {
 	private ExceptionAlerts exceptionAlerts = new ExceptionAlerts();
 	
 	//For now, we assume what they insert is indeed a binary search tree
-	public BinarySearchTree(int rootIndex, int treeMaxNumberOfNode, int[] keyArray, int[] parentArray, int[] leftChildArray, int[] rightChildArray){
+	public BinarySearchTree(int rootIndex, int treeMaxNumberOfNode, int[] keyArray, int[] parentArray, int[] leftChildArray, int[] rightChildArray, int[] satelliteData){
 		this.treeMaxNumberOfNode = treeMaxNumberOfNode;
 		if (keyArray.length != treeMaxNumberOfNode){
 			System.out.println(exceptionAlerts.arrayLengthMismatchAlert);
@@ -45,10 +45,11 @@ public class BinarySearchTree {
 		this.parentArray = parentArray;
 		this.leftChildArray = leftChildArray;
 		this.rightChildArray = rightChildArray;
+		this.satelliteData = satelliteData;
 		emptySpaceManager = new Stack(treeMaxNumberOfNode);
 		
 		//initialize emptySpaceManager
-		//it should be empty since no space is available
+		//it should be empty since no space is available --> seek for space with -1 as index of parent and children
 	}
 	
 	protected void printInOrderTreeWalk(){
@@ -151,45 +152,33 @@ public class BinarySearchTree {
 		}
 	}
 	
-	protected int[] minNode(){
+	protected int minNode(){
 		int currentNodeIndex = rootIndex;
-		int[] minNode = new int[4];
 		
 		//if tree is not empty
 		if (!isEmpty()){
 			while (leftChildArray[currentNodeIndex] != -1){
 				currentNodeIndex = leftChildArray[currentNodeIndex];
 			}
-			minNode[0] = keyArray[currentNodeIndex];
-			minNode[1] = parentArray[currentNodeIndex];
-			minNode[2] = leftChildArray[currentNodeIndex];
-			minNode[3] = rightChildArray[currentNodeIndex];
-			minNode[4] = satelliteData[currentNodeIndex];
-			return minNode;
+			return currentNodeIndex;
 		} else {
 			System.out.println("Tree is empty!");
-			return minNode;
+			return currentNodeIndex;
 		}
 	}
 	
-	protected int[] maxNode(){
+	protected int maxNode(){
 		int currentNodeIndex = rootIndex;
-		int[] maxNode = new int[4];
 		
 		//if tree is not empty
 		if (!isEmpty()){
 			while (rightChildArray[currentNodeIndex] != -1){
 				currentNodeIndex = rightChildArray[currentNodeIndex];
 			}
-			maxNode[0] = keyArray[currentNodeIndex];
-			maxNode[1] = parentArray[currentNodeIndex];
-			maxNode[2] = leftChildArray[currentNodeIndex];
-			maxNode[3] = rightChildArray[currentNodeIndex];
-			maxNode[4] = satelliteData[currentNodeIndex];
-			return maxNode;
+			return currentNodeIndex;
 		} else {
 			System.out.println("Tree is empty!");
-			return maxNode;
+			return currentNodeIndex;
 		}
 	}
 	
@@ -197,24 +186,48 @@ public class BinarySearchTree {
 		//looking for place to insert value
 		if (!isFull()){
 			int currentNode = rootIndex;
+			int successorCurrentNode = successor(currentNode);
+			int predecessorCurrentNode = predecessor(currentNode); 
+			int insertIndex = emptySpaceManager.top();
+			
 			do {
 				if (insertValue > keyArray[currentNode]){
-					currentNode = rightChildArray[currentNode];
+					currentNode = rightChildArray[currentNode];	
 				} else if (insertValue < keyArray[currentNode]){
 					currentNode = leftChildArray[currentNode];
 				} else {
-					//to avoid ArrayOutOfBoundException -1
+					//to avoid ArrayOutOfBoundException -1: rootIndex = currentNode
+					currentNode = rightChildArray[currentNode];
+
 				}
-			} while (!(insertValue >= keyArray[currentNode] && insertValue <= keyArray[parentArray[currentNode]])
-					|| (insertValue <= keyArray[currentNode] && insertValue >= keyArray[parentArray[currentNode]]));
-			
-			if (insertValue >= keyArray[currentNode] && insertValue <= keyArray[parentArray[currentNode]]){
-				if (insertValue >= successor(currentNode)){
-					
-				}
-			} else {
+			} 
+			/*Satisfy:
+			 * - insert value belong to [parent, node] or [node, parent]
+			 * - node has no more child*/
+			while ((!(insertValue >= keyArray[currentNode] && insertValue < keyArray[parentArray[currentNode]])
+					|| !(insertValue <= keyArray[currentNode] && insertValue >= keyArray[parentArray[currentNode]])) && hasChild(currentNode));
+						
+			System.out.println(currentNode);
+			if (insertValue >= keyArray[currentNode]){
+				//insert to currentNode as its right child
+
+				rightChildArray[currentNode] = insertIndex;
 				
+				keyArray[insertIndex] = insertValue;
+				parentArray[insertIndex] = currentNode;
+				rightChildArray[insertIndex] = -1;
+				leftChildArray[insertIndex] = -1;
+			} else {
+				//insert to currentNode as its left child;
+				System.out.println(currentNode);
+				leftChildArray[currentNode] = insertIndex;
+				
+				keyArray[insertIndex] = insertValue;
+				parentArray[insertIndex] = currentNode;
+				rightChildArray[insertIndex] = -1;
+				leftChildArray[insertIndex] = -1;
 			}
+			emptySpaceManager.pop();
 		} else {
 			System.out.println(exceptionAlerts.overFlowExceptionAlert);
 		}
@@ -260,50 +273,11 @@ public class BinarySearchTree {
 					
 					//delete index
 					setValueOfDeletedNode(index);
-					
-//				} else if (leftChildArray[rightChildArray[index]] == -1){
-//
-//					//second: if it has 2 children, pick the right child that has no left child or the left child that has no right child --> to fill up
-//					int fillUpNode = rightChildArray[index];
-//					
-//					//adjust parent
-//					if (leftChildArray[parentArray[index]] == index){
-//						leftChildArray[parentArray[index]] = fillUpNode;
-//					} else {
-//						rightChildArray[parentArray[index]] = fillUpNode;
-//					}
-//					
-//					//adjust left child
-//					parentArray[leftChildArray[index]] = fillUpNode;
-//					
-//					//adjust fillUpNode
-//					parentArray[fillUpNode] = parentArray[index];
-//					leftChildArray[fillUpNode] = leftChildArray[index];
-//					
-//					//delete index node
-//					setValueOfDeletedNode(index);
-//				} else if (rightChildArray[leftChildArray[index]] == -1) {
-//					int fillUpNode = rightChildArray[index];
-//					
-//					//adjust parent
-//					if (leftChildArray[parentArray[index]] == index){
-//						leftChildArray[parentArray[index]] = fillUpNode;
-//					} else {
-//						rightChildArray[parentArray[index]] = fillUpNode;
-//					}
-//					
-//					//adjust right child
-//					parentArray[rightChildArray[index]] = fillUpNode;
-//					
-//					//adjust fillUpNode
-//					parentArray[fillUpNode] = parentArray[index];
-//					rightChildArray[fillUpNode] = rightChildArray[index];
-//					
-//					//delete index node
-//					setValueOfDeletedNode(index);
   				  } else {
-					// this mean node will have both successor and predecessor as its grand... child
-					// take the successor --> successor will not has right child.
+					/* if node has both children
+					 * this mean node will have both successor and predecessor as its grand... child 
+					 * take the successor --> successor will not has right child.
+					 */
 					int successorIndex = successor(index);
 					if (hasChild(successorIndex)) {
 						//adjust child of successor if successor has right child
@@ -379,7 +353,7 @@ public class BinarySearchTree {
 	
 	//O(1)
 	protected boolean isFull(){
-		return !emptySpaceManager.isEmpty();
+		return emptySpaceManager.isEmpty();
 	}
 	
 	//T(n) = O(h)
