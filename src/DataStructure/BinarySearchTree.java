@@ -130,7 +130,7 @@ public class BinarySearchTree {
 		}
 	}
 	
-	protected int[] precedessor(int index){
+	protected int precedessor(int index){
 		if (isExist(index)){
 			
 		} else {
