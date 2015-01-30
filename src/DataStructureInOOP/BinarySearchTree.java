@@ -226,12 +226,16 @@ public class BinarySearchTree {
 		//--> choose among predecessor and successor which one has no child --> save the hassle
 		//if both has no child or both has child --> choose the successor
 		if (isExist(index)){
+			int parentIndex = binaryTree[index].getParentIndex();
+			int rightChildIndex = binaryTree[index].getRightChildIndex();
+			int leftChildIndex = binaryTree[index].getLeftChildIndex();
+			
 			//case 1: if it has no child --> just set its parent and its value to -1 accordingly
 			if (!hasChild(index)){
-				if (binaryTree[binaryTree[index].getParentIndex()].getRightChildIndex() == index){
-					binaryTree[binaryTree[index].getParentIndex()].setRightChildIndex(-1); 
-				} else if (binaryTree[binaryTree[index].getParentIndex()].getLeftChildIndex() == index) {
-					binaryTree[binaryTree[index].getParentIndex()].setLeftChildIndex(-1);
+				if (binaryTree[parentIndex].getRightChildIndex() == index){
+					binaryTree[parentIndex].setRightChildIndex(-1); 
+				} else if (binaryTree[parentIndex].getLeftChildIndex() == index) {
+					binaryTree[parentIndex].setLeftChildIndex(-1);
 				} else {
 					System.out.println(exceptionAlerts.unexpectedErrorInDataStructure);
 				}
@@ -242,21 +246,27 @@ public class BinarySearchTree {
 				//case 2: if it has child --> started to care about predecessor and successor
 				//        let the child fill up its position.
 				//first: if it has 1 child --> easy
-				if (hasChild(index) && (leftChildArray[index] == -1 || rightChildArray[index] == -1)) {
+				
+				int successorIndex = successor(index);
+				int successorParentIndex = binaryTree[successorIndex].getParentIndex();
+				int successorRightChildIndex = binaryTree[successorIndex].getRightChildIndex();
+				int successorLeftChildIndex = binaryTree[successorIndex].getLeftChildIndex();
+				
+				if (hasChild(index) && (leftChildIndex == -1 || rightChildIndex == -1)) {
 					//adjust index's parent
-					if (rightChildArray[parentArray[index]] == index){
-						rightChildArray[parentArray[index]] = leftChildArray[index];
-					} else if (binaryTree[binaryTree[index].getParentIndex()].getLeftChildIndex() == index) {
-						binaryTree[binaryTree[index].getParentIndex()].setLeftChildIndex(binaryTree[index].getLeftChildIndex());
+					if (binaryTree[parentIndex].getRightChildIndex() == index){
+						binaryTree[parentIndex].setRightChildIndex(leftChildIndex);
+					} else if (binaryTree[parentIndex].getLeftChildIndex() == index) {
+						binaryTree[parentIndex].setLeftChildIndex(leftChildIndex);
 					} else {
 						System.out.println(exceptionAlerts.unexpectedErrorInDataStructure);
 					}
 					
 					//adjust index's left child or right child
-					if (binaryTree[index].getLeftChildIndex() != -1){
-						binaryTree[binaryTree[index].getLeftChildIndex()].setParentIndex(binaryTree[index].getParentIndex());
+					if (leftChildIndex != -1){
+						binaryTree[leftChildIndex].setParentIndex(parentIndex);
 					} else {
-						binaryTree[binaryTree[index].getRightChildIndex()].setParentIndex(binaryTree[index].getParentIndex());
+						binaryTree[rightChildIndex].setParentIndex(parentIndex);
 					}
 					
 					//delete index
@@ -266,52 +276,51 @@ public class BinarySearchTree {
 					 * this mean node will have both successor and predecessor as its grand... child 
 					 * take the successor --> successor will not has right child.
 					 */
-					int successorIndex = successor(index);
+					
 					if (hasChild(successorIndex)) {
 						//adjust child of successor if successor has right child
-						binaryTree[binaryTree[successorIndex].getRightChildIndex()].setParentIndex(binaryTree[successorIndex].getParentIndex());
-						leftChildArray[parentArray[successorIndex]] = rightChildArray[successorIndex];
+						binaryTree[successorRightChildIndex].setParentIndex(successorParentIndex);
+						binaryTree[successorParentIndex].setLeftChildIndex(successorRightChildIndex);
 						
 						//adjust parent of successor:
-						rightChildArray[parentArray[successorIndex]] = -1;
+						binaryTree[successorParentIndex].setRightChildIndex(-1);
 						
 						//adjust successor
-						parentArray[successorIndex] = parentArray[index];
-						rightChildArray[successorIndex] = rightChildArray[index];
-						leftChildArray[successorIndex] = leftChildArray[index];
-						
+						binaryTree[successorParentIndex].setParentIndex(parentIndex);
+						binaryTree[successorRightChildIndex].setRightChildIndex(rightChildIndex);
+						binaryTree[successorLeftChildIndex].setLeftChildIndex(leftChildIndex);
 						
 						//adjust child of index
-						parentArray[rightChildArray[index]] = successorIndex;
-						parentArray[leftChildArray[index]] = successorIndex;
+						binaryTree[rightChildIndex].setParentIndex(successorIndex);
+						binaryTree[leftChildIndex].setParentIndex(successorIndex);
 						
 						//adjust parent of index
-						rightChildArray[parentArray[index]] = successorIndex;
+						binaryTree[parentIndex].setRightChildIndex(successorIndex);
 						
 						//delete index
 						setValueOfDeletedNode(index);
 					} else {
-						System.out.println(parentArray[successor(index)]);
+						System.out.println(successorParentIndex);
 						//adjust parent of successor:
-						leftChildArray[parentArray[successorIndex]] = -1;
+						binaryTree[successorParentIndex].setLeftChildIndex(-1);
 						
 						// now successor(index) = 9
-						System.out.println(parentArray[successorIndex] + " " + rightChildArray[successorIndex] + " " + leftChildArray[successorIndex]);
+						//System.out.println(successorParentIndex + " " + successorRightChildIndex + " " + successorLeftChildIndex);
 
 						//adjust successor
-						parentArray[successorIndex] = parentArray[index];
-						rightChildArray[successorIndex] = rightChildArray[index];
-						leftChildArray[successorIndex] = leftChildArray[index];
+						binaryTree[successorIndex].setParentIndex(parentIndex);
+						binaryTree[successorIndex].setRightChildIndex(rightChildIndex);
+						binaryTree[successorIndex].setLeftChildIndex(leftChildIndex);
 						
-						System.out.println(parentArray[successorIndex] + " " + rightChildArray[successorIndex] + " " + leftChildArray[successorIndex]);
+						//System.out.println(successorParentIndex + " " + successorRightChildIndex + " " + successorRightChildIndex);
 
 						
 						//adjust child of index
-						parentArray[rightChildArray[index]] = successorIndex;
-						parentArray[leftChildArray[index]] = successorIndex;
-						
+						binaryTree[rightChildIndex].setParentIndex(successorIndex);
+						binaryTree[leftChildIndex].setParentIndex(successorIndex);
+
 						//adjust parent of index
-						rightChildArray[parentArray[index]] = successorIndex;
+						binaryTree[parentIndex].setRightChildIndex(successorIndex);
 						
 						//delete index
 						setValueOfDeletedNode(index);
