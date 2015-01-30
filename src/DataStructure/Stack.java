@@ -6,11 +6,11 @@ public class Stack {
 	private int head = -1;
 	private ExceptionAlerts exceptionAlerts = new ExceptionAlerts();
 	
-	protected Stack(){
+	public Stack(){
 		stack = new int[stackSize];
 	}
 	
-	protected Stack(int stackSize){
+	public Stack(int stackSize){
 		this.stackSize = stackSize;
 		stack = new int[this.stackSize];
 	}
@@ -25,7 +25,7 @@ public class Stack {
 			System.out.print("head\n");
 		}
 	}
-	protected void push(int pushValue){
+	public void push(int pushValue){
 		if (!isFull()){
 			head++;
 			stack[head] = pushValue;
@@ -34,7 +34,7 @@ public class Stack {
 		}
 	}
 	
-	protected void pop(){
+	public void pop(){
 		if (!isEmpty()){
 			head--;
 		} else {
@@ -43,11 +43,11 @@ public class Stack {
 		
 	}
 	
-	protected int top(){
+	public int top(){
 		return stack[head];
 	}
 	
-	protected boolean isEmpty(){
+	public boolean isEmpty(){
 		if (head != -1){
 			return false;
 		}

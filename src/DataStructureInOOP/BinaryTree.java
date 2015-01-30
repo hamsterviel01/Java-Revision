@@ -17,11 +17,11 @@ public class BinaryTree {
 		this.binaryTree = binaryTree;
 	}
 	
-	public BinaryTree(int[] arrayValue, int[] arrayLeft, int[] arrayRight){
-		BinaryTreeNode[] binaryTree = new BinaryTreeNode[11];
-		this.binaryTree = binaryTree;
+	public BinaryTree(int[] arrayValue, int[] arrayLeft, int[] arrayRight){ 
+		binaryTree = new BinaryTreeNode[11];
 		
 		for (int i = 0; i < binaryTree.length; i++){
+			this.binaryTree[i] = new BinaryTreeNode();
 			this.binaryTree[i].setIndex(i);
 			this.binaryTree[i].setValue(arrayValue[i]);
 			this.binaryTree[i].setLeftChildIndex(arrayLeft[i]);

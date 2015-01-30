@@ -12,38 +12,26 @@ import DataStructure.Stack;
 public class BinarySearchTree {
 	private int treeMaxNumberOfNode;
 	private int rootIndex;
-	private BinaryTreeNode binaryTree;
+	private BinaryTreeNode[] binaryTree;
 	private Stack emptySpaceManager;
 	private ExceptionAlerts exceptionAlerts = new ExceptionAlerts();
 	
 	//For now, we assume what they insert is indeed a binary search tree
 	public BinarySearchTree(int rootIndex, int treeMaxNumberOfNode, int[] keyArray, int[] parentArray, int[] leftChildArray, int[] rightChildArray, int[] satelliteData){
 		this.treeMaxNumberOfNode = treeMaxNumberOfNode;
-		if (keyArray.length != treeMaxNumberOfNode){
-			System.out.println(exceptionAlerts.arrayLengthMismatchAlert);
-			return;
-		}
-		if (parentArray.length != treeMaxNumberOfNode){
-			System.out.println(exceptionAlerts.arrayLengthMismatchAlert);
-			return;
-		}
-		if (leftChildArray.length != treeMaxNumberOfNode){
-			System.out.println(exceptionAlerts.arrayLengthMismatchAlert);
-			return;
-		}
-		if (rightChildArray.length != treeMaxNumberOfNode){
-			System.out.println(exceptionAlerts.arrayLengthMismatchAlert);
-			return;
-		}
-		
+		this.binaryTree = new BinaryTreeNode[this.treeMaxNumberOfNode];
+		this.rootIndex = rootIndex;
 		// May need to check if what people insert is a binary search tree --> here is better than outside constructor
 		
-		this.rootIndex = rootIndex;
-		this.keyArray = keyArray;
-		this.parentArray = parentArray;
-		this.leftChildArray = leftChildArray;
-		this.rightChildArray = rightChildArray;
-		this.satelliteData = satelliteData;
+		for (int i = 0; i < binaryTree.length; i++){
+			this.binaryTree[i] = new BinaryTreeNode();
+			this.binaryTree[i].setIndex(i);
+			this.binaryTree[i].setParentIndex(parentArray[i]);
+			this.binaryTree[i].setLeftChildIndex(leftChildArray[i]);
+			this.binaryTree[i].setRightChildIndex(rightChildArray[i]);
+			this.binaryTree[i].setSatelliteData(satelliteData[i]);
+		}
+
 		emptySpaceManager = new Stack(treeMaxNumberOfNode);
 		
 		//initialize emptySpaceManager
@@ -57,12 +45,14 @@ public class BinarySearchTree {
 	
 	protected void printRecursiveInOrderTreeWalk(int startNode){
 		//print tree from start node x: x.left -> print x --> print x.right
-		if (leftChildArray[startNode] != -1){
-			printRecursiveInOrderTreeWalk(leftChildArray[startNode]);
+		if (binaryTree[startNode].getLeftChildIndex() != -1){
+			printRecursiveInOrderTreeWalk(binaryTree[startNode].getLeftChildIndex());
 		}
-		System.out.print(keyArray[startNode] + "-");
-		if (rightChildArray[startNode] != -1){
-			printRecursiveInOrderTreeWalk(rightChildArray[startNode]);
+		
+		System.out.print(binaryTree[startNode].getValue() + "-");
+		
+		if (binaryTree[startNode].getRightChildIndex() != -1){
+			printRecursiveInOrderTreeWalk(binaryTree[startNode].getRightChildIndex());
 		}
 	}
 	
@@ -72,12 +62,12 @@ public class BinarySearchTree {
 	}
 	
 	protected void printRecursivePreOrderTreeWalk(int currentNode){
-		System.out.print(keyArray[currentNode] + "-");
-		if (leftChildArray[currentNode] != -1){
-			printRecursivePreOrderTreeWalk(leftChildArray[currentNode]);
+		System.out.print(binaryTree[currentNode].getValue() + "-");
+		if (binaryTree[currentNode].getLeftChildIndex() != -1){
+			printRecursivePreOrderTreeWalk(binaryTree[currentNode].getLeftChildIndex());
 		}
-		if (rightChildArray[currentNode] != -1){
-			printRecursivePreOrderTreeWalk(rightChildArray[currentNode]);
+		if (binaryTree[currentNode].getRightChildIndex() != -1){
+			printRecursivePreOrderTreeWalk(binaryTree[currentNode].getRightChildIndex());
 		}
 	}
 	protected void printPostOrderTreeWalk(){
@@ -85,12 +75,12 @@ public class BinarySearchTree {
 	}
 	
 	protected void printRecursivePostOrderTreeWalk(int currentNode){
-		System.out.println(keyArray[currentNode]);
-		if (leftChildArray[currentNode] != -1){
-			printRecursivePostOrderTreeWalk(leftChildArray[currentNode]);
+		System.out.println(binaryTree[currentNode].getValue());
+		if (binaryTree[currentNode].getLeftChildIndex() != -1){
+			printRecursivePostOrderTreeWalk(binaryTree[currentNode].getLeftChildIndex());
 		}
-		if (rightChildArray[currentNode] != -1){
-			printRecursivePostOrderTreeWalk(rightChildArray[currentNode]);
+		if (binaryTree[currentNode].getRightChildIndex() != -1){
+			printRecursivePostOrderTreeWalk(binaryTree[currentNode].getRightChildIndex());
 		}
 	}
 	
@@ -99,22 +89,22 @@ public class BinarySearchTree {
 		//check if this index belong to tree or not
 		if (isExist(index)){
 			//if node has no right child --> the first ancestor who previous ancestor a left child will be its successor
-			if (rightChildArray[index] == -1){
+			if (binaryTree[index].getRightChildIndex() == -1){
 				do {
-					if (leftChildArray[parentArray[index]] == index){
+					if (binaryTree[binaryTree[index].getParentIndex()].getLeftChildIndex() == index){
 						//return successor
 						return index;
 					}
-					index = parentArray[index];
+					index = binaryTree[index].getParentIndex();
 				} while (index != rootIndex);
 				
 				//if it reach root and root's left child is not its (our node) ancestor, return no successor
 				return -1;
 			} else {
 				//if current node has right child --> its leftmost child is successor
-				index = rightChildArray[index];
-				while (leftChildArray[index] != -1){
-					index = leftChildArray[index];
+				index = binaryTree[index].getRightChildIndex();
+				while (binaryTree[index].getLeftChildIndex() != -1){
+					index = binaryTree[index].getLeftChildIndex();
 				}
 				return index;
 			}
@@ -128,19 +118,19 @@ public class BinarySearchTree {
 		//Check if index belong to tree or not
 		if (isExist(index)){
 			//If node has no left child, first ancestor with right child is also an ancestor of index will be its predecessor
-			if (leftChildArray[index] == -1){
+			if (binaryTree[index].getLeftChildIndex() == -1){
 				do {
-					if (rightChildArray[parentArray[index]] == index){
-						return parentArray[index];
+					if (binaryTree[binaryTree[index].getParentIndex()].getRightChildIndex() == index){
+						return binaryTree[index].getParentIndex();
 					}
-					index = parentArray[index];
+					index = binaryTree[index].getParentIndex();
 				} while (index != rootIndex);
 				return -1;
 			} else {
 				//if node has left child --> rightmost child of left sub-tree is it predecessor
-				index = leftChildArray[index];
-				while (rightChildArray[index] != -1){
-					index = rightChildArray[index];
+				index = binaryTree[index].getLeftChildIndex();
+				while (binaryTree[index].getRightChildIndex() != -1){
+					index = binaryTree[index].getRightChildIndex();
 				}
 				return index;
 			}
@@ -155,8 +145,8 @@ public class BinarySearchTree {
 		
 		//if tree is not empty
 		if (!isEmpty()){
-			while (leftChildArray[currentNodeIndex] != -1){
-				currentNodeIndex = leftChildArray[currentNodeIndex];
+			while (binaryTree[currentNodeIndex].getLeftChildIndex() != -1){
+				currentNodeIndex = binaryTree[currentNodeIndex].getLeftChildIndex();
 			}
 			return currentNodeIndex;
 		} else {
@@ -170,8 +160,8 @@ public class BinarySearchTree {
 		
 		//if tree is not empty
 		if (!isEmpty()){
-			while (rightChildArray[currentNodeIndex] != -1){
-				currentNodeIndex = rightChildArray[currentNodeIndex];
+			while (binaryTree[currentNodeIndex].getRightChildIndex() != -1){
+				currentNodeIndex = binaryTree[currentNodeIndex].getRightChildIndex();
 			}
 			return currentNodeIndex;
 		} else {
@@ -189,41 +179,40 @@ public class BinarySearchTree {
 			int insertIndex = emptySpaceManager.top();
 			
 			do {
-				if (insertValue > keyArray[currentNode]){
-					currentNode = rightChildArray[currentNode];	
-				} else if (insertValue < keyArray[currentNode]){
-					currentNode = leftChildArray[currentNode];
+				if (insertValue > binaryTree[currentNode].getValue()){
+					currentNode = binaryTree[currentNode].getRightChildIndex();	
+				} else if (insertValue < binaryTree[currentNode].getValue()){
+					currentNode = binaryTree[currentNode].getLeftChildIndex();
 				} else {
 					//to avoid ArrayOutOfBoundException -1: rootIndex = currentNode
-					currentNode = rightChildArray[currentNode];
+					currentNode = binaryTree[currentNode].getRightChildIndex();
 
 				}
 			} 
 			/*Satisfy:
 			 * - insert value belong to [parent, node] or [node, parent]
 			 * - node has no more child*/
-			while ((!(insertValue >= keyArray[currentNode] && insertValue < keyArray[parentArray[currentNode]])
-					|| !(insertValue <= keyArray[currentNode] && insertValue >= keyArray[parentArray[currentNode]])) && hasChild(currentNode));
+			while ((!(insertValue >= binaryTree[currentNode].getValue() && insertValue < binaryTree[binaryTree[currentNode].getParentIndex()].getValue())
+					|| !(insertValue <= binaryTree[currentNode].getValue() && insertValue >= binaryTree[binaryTree[currentNode].getParentIndex()].getValue())) && hasChild(currentNode));
 						
 			System.out.println(currentNode);
-			if (insertValue >= keyArray[currentNode]){
+			if (insertValue >= binaryTree[currentNode].getValue()){
 				//insert to currentNode as its right child
-
-				rightChildArray[currentNode] = insertIndex;
+				binaryTree[currentNode].setRightChildIndex(insertIndex);
 				
-				keyArray[insertIndex] = insertValue;
-				parentArray[insertIndex] = currentNode;
-				rightChildArray[insertIndex] = -1;
-				leftChildArray[insertIndex] = -1;
+				binaryTree[insertIndex].setValue(insertValue);
+				binaryTree[insertIndex].setParentIndex(currentNode);
+				binaryTree[insertIndex].setRightChildIndex(-1);
+				binaryTree[insertIndex].setLeftChildIndex(-1);
 			} else {
 				//insert to currentNode as its left child;
 				System.out.println(currentNode);
-				leftChildArray[currentNode] = insertIndex;
+				binaryTree[currentNode].setLeftChildIndex(insertIndex);
 				
-				keyArray[insertIndex] = insertValue;
-				parentArray[insertIndex] = currentNode;
-				rightChildArray[insertIndex] = -1;
-				leftChildArray[insertIndex] = -1;
+				binaryTree[insertIndex].setValue(insertValue);
+				binaryTree[insertIndex].setParentIndex(currentNode);
+				binaryTree[insertIndex].setRightChildIndex(-1);
+				binaryTree[insertIndex].setLeftChildIndex(-1);
 			}
 			emptySpaceManager.pop();
 		} else {
@@ -231,6 +220,7 @@ public class BinarySearchTree {
 		}
 	}
 	
+	//May need to find a way to not call getter and setter too many time.
 	protected void delete(int index){
 		//Imagine that it is a sorted order list --> to delete is to modified relationship between its predecessor and successor 
 		//--> choose among predecessor and successor which one has no child --> save the hassle
@@ -238,10 +228,10 @@ public class BinarySearchTree {
 		if (isExist(index)){
 			//case 1: if it has no child --> just set its parent and its value to -1 accordingly
 			if (!hasChild(index)){
-				if (rightChildArray[parentArray[index]] == index){
-					rightChildArray[parentArray[index]] = -1;
-				} else if (leftChildArray[parentArray[index]] == index) {
-					leftChildArray[parentArray[index]] = -1;
+				if (binaryTree[binaryTree[index].getParentIndex()].getRightChildIndex() == index){
+					binaryTree[binaryTree[index].getParentIndex()].setRightChildIndex(-1); 
+				} else if (binaryTree[binaryTree[index].getParentIndex()].getLeftChildIndex() == index) {
+					binaryTree[binaryTree[index].getParentIndex()].setLeftChildIndex(-1);
 				} else {
 					System.out.println(exceptionAlerts.unexpectedErrorInDataStructure);
 				}
@@ -256,17 +246,17 @@ public class BinarySearchTree {
 					//adjust index's parent
 					if (rightChildArray[parentArray[index]] == index){
 						rightChildArray[parentArray[index]] = leftChildArray[index];
-					} else if (leftChildArray[parentArray[index]] == index) {
-						leftChildArray[parentArray[index]] = leftChildArray[index];
+					} else if (binaryTree[binaryTree[index].getParentIndex()].getLeftChildIndex() == index) {
+						binaryTree[binaryTree[index].getParentIndex()].setLeftChildIndex(binaryTree[index].getLeftChildIndex());
 					} else {
 						System.out.println(exceptionAlerts.unexpectedErrorInDataStructure);
 					}
 					
 					//adjust index's left child or right child
-					if (leftChildArray[index] != -1){
-						parentArray[leftChildArray[index]] = parentArray[index];
+					if (binaryTree[index].getLeftChildIndex() != -1){
+						binaryTree[binaryTree[index].getLeftChildIndex()].setParentIndex(binaryTree[index].getParentIndex());
 					} else {
-						parentArray[rightChildArray[index]] = parentArray[index];
+						binaryTree[binaryTree[index].getRightChildIndex()].setParentIndex(binaryTree[index].getParentIndex());
 					}
 					
 					//delete index
@@ -279,7 +269,7 @@ public class BinarySearchTree {
 					int successorIndex = successor(index);
 					if (hasChild(successorIndex)) {
 						//adjust child of successor if successor has right child
-						parentArray[rightChildArray[successorIndex]] = parentArray[successorIndex];
+						binaryTree[binaryTree[successorIndex].getRightChildIndex()].setParentIndex(binaryTree[successorIndex].getParentIndex());
 						leftChildArray[parentArray[successorIndex]] = rightChildArray[successorIndex];
 						
 						//adjust parent of successor:
@@ -332,9 +322,9 @@ public class BinarySearchTree {
 	}
 	
 	private void setValueOfDeletedNode(int index){
-		parentArray[index] = -1;
-		leftChildArray[index] = -1;
-		rightChildArray[index] = -1;
+		binaryTree[index].setParentIndex(-1);
+		binaryTree[index].setLeftChildIndex(-1);
+		binaryTree[index].setRightChildIndex(-1);
 		
 		//adjust emptySpaceManager
 		emptySpaceManager.push(index);
@@ -343,7 +333,7 @@ public class BinarySearchTree {
 	//O(1)
 	protected boolean isEmpty(){
 		//if root has no key --> no root
-		if (keyArray[rootIndex] == -1){
+		if (binaryTree[rootIndex].getValue() == -1){
 			return true;
 		}
 		return false;
@@ -364,14 +354,14 @@ public class BinarySearchTree {
 			} else {
 				do {
 					//check if node is a valid child of its parent (either right child or left child)
-					if (rightChildArray[parentArray[key]] == key || leftChildArray[parentArray[key]] == key){
+					if (binaryTree[binaryTree[key].getParentIndex()].getRightChildIndex() == key || binaryTree[binaryTree[key].getParentIndex()].getLeftChildIndex() == key){
 						// check node's parent --> see if it valid
-						key = parentArray[key]; 
+						key = binaryTree[key].getParentIndex(); 
 					} else {
 						return false;
 					}
 				}
-				while (parentArray[key] != -1);
+				while (binaryTree[key].getParentIndex() != -1);
 				
 				//see if the oldest ancestor is root.
 				if (key == rootIndex){
@@ -386,7 +376,7 @@ public class BinarySearchTree {
 	}
 	
 	protected boolean hasChild(int index){
-		if (rightChildArray[index] != -1 || leftChildArray[index] != -1){
+		if (binaryTree[index].getRightChildIndex() != -1 || binaryTree[index].getLeftChildIndex()  != -1){
 			return true;
 		}
 		return false;
