@@ -13,23 +13,28 @@ public class BinarySearchTree {
 	private int treeMaxNumberOfNode;
 	private int rootIndex;
 	private BinaryTreeNode[] binaryTree;
+	public BinaryTreeNode[] getBinaryTree() {
+		return binaryTree;
+	}
+
 	private Stack emptySpaceManager;
 	private ExceptionAlerts exceptionAlerts = new ExceptionAlerts();
 	
 	//For now, we assume what they insert is indeed a binary search tree
 	public BinarySearchTree(int rootIndex, int treeMaxNumberOfNode, int[] keyArray, int[] parentArray, int[] leftChildArray, int[] rightChildArray, int[] satelliteData){
 		this.treeMaxNumberOfNode = treeMaxNumberOfNode;
-		this.binaryTree = new BinaryTreeNode[this.treeMaxNumberOfNode];
+		binaryTree = new BinaryTreeNode[this.treeMaxNumberOfNode];
 		this.rootIndex = rootIndex;
 		// May need to check if what people insert is a binary search tree --> here is better than outside constructor
 		
 		for (int i = 0; i < binaryTree.length; i++){
-			this.binaryTree[i] = new BinaryTreeNode();
-			this.binaryTree[i].setIndex(i);
-			this.binaryTree[i].setParentIndex(parentArray[i]);
-			this.binaryTree[i].setLeftChildIndex(leftChildArray[i]);
-			this.binaryTree[i].setRightChildIndex(rightChildArray[i]);
-			this.binaryTree[i].setSatelliteData(satelliteData[i]);
+			binaryTree[i] = new BinaryTreeNode();
+			binaryTree[i].setIndex(i);
+			binaryTree[i].setValue(keyArray[i]);
+			binaryTree[i].setParentIndex(parentArray[i]);
+			binaryTree[i].setLeftChildIndex(leftChildArray[i]);
+			binaryTree[i].setRightChildIndex(rightChildArray[i]);
+			binaryTree[i].setSatelliteData(satelliteData[i]);
 		}
 
 		emptySpaceManager = new Stack(treeMaxNumberOfNode);

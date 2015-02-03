@@ -15,7 +15,7 @@ public class BinaryTreeNode {
 	private int satelliteData;
 	
 	//For Red Black Tree
-	private int color;
+	private String color;
 	private int index;
 	
 	protected BinaryTreeNode() {
@@ -78,11 +78,11 @@ public class BinaryTreeNode {
 		this.satelliteData = satelliteData;
 	}
 
-	public int getColor() {
+	public String getColor() {
 		return color;
 	}
 
-	public void setColor(int color) {
+	public void setColor(String color) {
 		this.color = color;
 	}
 }

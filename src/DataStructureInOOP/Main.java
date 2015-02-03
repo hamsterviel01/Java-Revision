@@ -21,9 +21,12 @@ public class Main {
 		int[] leftChildArray = 		{-1,  0,  1, -1,  2, -1,  5, -1,  6, 11, -1, -1};
 		int[] rightChildArray = 	{-1, -1,  3, -1,  8, -1,  7, -1,  9, 10, -1, -1};
 		int[] satelliteData = 		{-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
+		String[] color = 			{"black", "black", "black", "black", "black", "black", "black", "black", "black", "black", "black", "black"};
 		BinarySearchTree binarySearchTree1 = new BinarySearchTree(rootIndex, treeMaxNumberOfNode, keyArray, parentArray, leftChildArray, rightChildArray, satelliteData);
+		RedBlackTree tree = new RedBlackTree(rootIndex, treeMaxNumberOfNode, keyArray, parentArray, leftChildArray, rightChildArray, satelliteData, color);
 		
-		//binarySearchTree1.printInOrderTreeWalk();
+		tree.printInOrderTreeWalk();
+		binarySearchTree1.printInOrderTreeWalk();
 		binarySearchTree1.delete(5);
 		binarySearchTree1.printInOrderTreeWalk();
 		binarySearchTree1.printPreOrderTreeWalk();
