@@ -21,6 +21,30 @@ public class BinarySearchTree {
 	private ExceptionAlerts exceptionAlerts = new ExceptionAlerts();
 	
 	//For now, we assume what they insert is indeed a binary search tree
+	public BinaryTreeNode[] BinarySearchTree(int rootIndex, int treeMaxNumberOfNode, int[] keyArray, int[] parentArray, int[] leftChildArray, int[] rightChildArray, int[] satelliteData){
+		this.treeMaxNumberOfNode = treeMaxNumberOfNode;
+		binaryTree = new BinaryTreeNode[this.treeMaxNumberOfNode];
+		this.rootIndex = rootIndex;
+		// May need to check if what people insert is a binary search tree --> here is better than outside constructor
+		
+		for (int i = 0; i < binaryTree.length; i++){
+			binaryTree[i] = new BinaryTreeNode();
+			binaryTree[i].setIndex(i);
+			binaryTree[i].setValue(keyArray[i]);
+			binaryTree[i].setParentIndex(parentArray[i]);
+			binaryTree[i].setLeftChildIndex(leftChildArray[i]);
+			binaryTree[i].setRightChildIndex(rightChildArray[i]);
+			binaryTree[i].setSatelliteData(satelliteData[i]);
+		}
+
+		emptySpaceManager = new Stack(treeMaxNumberOfNode);
+		
+		//initialize emptySpaceManager
+		//it should be empty since no space is available --> seek for space with -1 as index of parent and children
+		
+		return binaryTree;
+	}
+	
 	public BinarySearchTree(int rootIndex, int treeMaxNumberOfNode, int[] keyArray, int[] parentArray, int[] leftChildArray, int[] rightChildArray, int[] satelliteData){
 		this.treeMaxNumberOfNode = treeMaxNumberOfNode;
 		binaryTree = new BinaryTreeNode[this.treeMaxNumberOfNode];
@@ -41,6 +65,8 @@ public class BinarySearchTree {
 		
 		//initialize emptySpaceManager
 		//it should be empty since no space is available --> seek for space with -1 as index of parent and children
+		
+		return;
 	}
 	
 	protected void printInOrderTreeWalk(){

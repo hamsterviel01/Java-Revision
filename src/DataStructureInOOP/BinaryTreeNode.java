@@ -13,10 +13,18 @@ public class BinaryTreeNode {
 	private int rightChildIndex;
 	private int parentIndex;
 	private int satelliteData;
+	private int index;
 	
 	//For Red Black Tree
 	private String color;
-	private int index;
+	
+	//For interval Tree
+	private int high;
+	private int low;
+	private int max;
+	
+	//For order statistic tree
+	private int numberOfChild;
 	
 	protected BinaryTreeNode() {
 		return;
@@ -84,5 +92,21 @@ public class BinaryTreeNode {
 
 	public void setColor(String color) {
 		this.color = color;
+	}
+	
+	public int getHigh() {
+		return high;
+	}
+
+	public void setHigh(int high) {
+		this.high = high;
+	}
+
+	public int getLow() {
+		return low;
+	}
+
+	public void setLow(int low) {
+		this.low = low;
 	}
 }
