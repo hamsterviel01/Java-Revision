@@ -24,7 +24,7 @@ public class IntervalTree extends RedBlackTree{
 		return false;
 	}
 	
-	protected int intervalSearch(int low, int high){
-		
-	}
+//	protected int intervalSearch(int low, int high){
+//		
+//	}
 }
