@@ -1,8 +1,0 @@
-/**
- * 
- */
-/**
- * @author DrHamsterviel
- *
- */
-package DataStructure;
