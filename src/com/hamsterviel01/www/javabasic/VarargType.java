@@ -10,7 +10,7 @@ import com.hamsterviel01.www.algorithm.basictechnique.*;
  * @author tuananhn
  *
  */
-public class VarargType {
+public class VarargType extends TestAbstract {
 
 	/**
 	 * This also shows how you can use varargs with a specified type other than Object. 
@@ -79,5 +79,9 @@ public class VarargType {
 		}
 		
 		Sorting as = new Sorting();
+	}
+	
+	void print(){
+		System.out.print("sdfa");
 	}
 }
