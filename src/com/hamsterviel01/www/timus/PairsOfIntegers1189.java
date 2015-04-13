@@ -1,12 +1,20 @@
 package com.hamsterviel01.www.timus;
 
 import java.io.*;
+import java.security.*;
 import java.util.*;
 
 public class PairsOfIntegers1189 {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
+		try {
+			SecureRandom r = SecureRandom.getInstance("SHA1PRNG");
+			System.out.println((char)(r.nextDouble() * 26 + 'A'));
+		} catch (NoSuchAlgorithmException e) {
+			
+		}
+		
 		Scanner in = new Scanner(System.in);
 		int n = in.nextInt();
 		PrintWriter out = new PrintWriter(System.out);
