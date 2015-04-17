@@ -48,8 +48,11 @@ public class VarargType extends TestAbstract {
 	}
 	
 	static void h(Object... args){
+		public int number = 9;
 		System.out.println(args.getClass() + " " + args.length + " " + args.toString());
 	}
+	
+	
 	
 	public static void main(String[] args) {
 		//138 Thinking in Java Bruce Eckel
@@ -79,9 +82,28 @@ public class VarargType extends TestAbstract {
 		}
 		
 		Sorting as = new Sorting();
+		
+//		Child1 child1 = new Child1();
+//		System.out.println(child1.override1());
 	}
 	
 	void print(){
 		System.out.print("sdfa");
+	}
+}
+
+//Tuan And to add few test class here
+class Inheritable1 {
+	public int override1(){
+		System.out.println("Override1");
+		return 1;
+	}
+}
+
+class Child1 extends Inheritable1 {
+	public int override1(){
+		super.override1();
+		System.out.println("Override2");
+		return 2;
 	}
 }
