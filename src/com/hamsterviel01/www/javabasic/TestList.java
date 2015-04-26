@@ -29,5 +29,7 @@ public class TestList {
 		petParameterized.addAll(pets);
 		System.out.println(petParameterized);
 		Object[] petArray = petParameterized.toArray();
+		System.out.println(petParameterized.containsAll(pets));
+		System.out.println(petParameterized);
 	}
 }
